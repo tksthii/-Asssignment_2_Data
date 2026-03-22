@@ -2,59 +2,102 @@
 #include <stdlib.h>
 #include "bst.h"
 
-static BSTNode* create_node(char data) {
-    BSTNode* node = (BSTNode*)malloc(sizeof(BSTNode));
-    if (!node) {
-        fprintf(stderr, "Error: memory allocation failed.\n");
-        exit(EXIT_FAILURE);
-    }
-    node->data = data;
-    node->left = NULL;
-    node->right = NULL;
-    return node;
-}
-
-void bst_insert(BSTNode** root, char data) {
+/*
+ * Function: bst_insert
+ * --------------------
+ * Inserts a character into the BST.
+ * If the character already exists, it is ignored.
+ *
+ * root: pointer to root pointer (allows modification)
+ * data: character to insert
+ */
+void bst_insert(Node** root, char data) {
+    // If tree is empty, create new node
     if (*root == NULL) {
-        *root = create_node(data);
+        *root = (Node*)malloc(sizeof(Node));
+        (*root)->data = data;
+        (*root)->left = NULL;
+        (*root)->right = NULL;
         return;
     }
-    if (data < (*root)->data)
+
+    // Insert into left subtree
+    if (data < (*root)->data) {
         bst_insert(&(*root)->left, data);
-    else if (data > (*root)->data)
+    }
+    // Insert into right subtree
+    else if (data > (*root)->data) {
         bst_insert(&(*root)->right, data);
-    /* duplicate: ignore */
+    }
+    // Duplicate values are ignored
 }
 
-BSTNode* bst_search(BSTNode* root, char data) {
-    if (root == NULL || root->data == data)
-        return root;
-    if (data < root->data)
-        return bst_search(root->left, data);
-    return bst_search(root->right, data);
-}
-
-int bst_count_nodes(BSTNode* root) {
+/*
+ * Function: bst_search
+ * --------------------
+ * Searches for a target character in the BST.
+ *
+ * Returns 1 if found, 0 otherwise.
+ */
+int bst_search(Node* root, char target) {
     if (root == NULL) return 0;
+
+    if (target == root->data) return 1;
+    else if (target < root->data)
+        return bst_search(root->left, target);
+    else
+        return bst_search(root->right, target);
+}
+
+/*
+ * Function: bst_count_nodes
+ * -------------------------
+ * Counts total number of nodes in the BST.
+ */
+int bst_count_nodes(Node* root) {
+    if (root == NULL) return 0;
+
     return 1 + bst_count_nodes(root->left) + bst_count_nodes(root->right);
 }
 
-int bst_height(BSTNode* root) {
+/*
+ * Function: bst_height
+ * --------------------
+ * Computes height of the BST.
+ *
+ * Height is defined as number of nodes
+ * along the longest path from root to leaf.
+ */
+int bst_height(Node* root) {
     if (root == NULL) return 0;
-    int left_h = bst_height(root->left);
-    int right_h = bst_height(root->right);
-    return 1 + (left_h > right_h ? left_h : right_h);
+
+    int leftHeight = bst_height(root->left);
+    int rightHeight = bst_height(root->right);
+
+    return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
 }
 
-void bst_inorder_print(BSTNode* root) {
+/*
+ * Function: bst_inorder_print
+ * ---------------------------
+ * Prints the BST in sorted order using inorder traversal.
+ */
+void bst_inorder_print(Node* root) {
     if (root == NULL) return;
+
     bst_inorder_print(root->left);
     printf("%c ", root->data);
     bst_inorder_print(root->right);
 }
 
-void bst_free(BSTNode* root) {
+/*
+ * Function: bst_free
+ * ------------------
+ * Frees all memory allocated for the BST.
+ */
+void bst_free(Node* root) {
     if (root == NULL) return;
+
     bst_free(root->left);
     bst_free(root->right);
     free(root);

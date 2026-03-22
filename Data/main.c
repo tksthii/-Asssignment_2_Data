@@ -3,34 +3,42 @@
 #include <time.h>
 #include "bst.h"
 
-#define MIN_CHARS  11
-#define MAX_CHARS  20
-#define ALPHA_SIZE 26
+int main() {
+    Node* root = NULL;
 
-int main(void) {
-    srand((unsigned int)time(NULL));
+    // Seed random number generator
+    srand(time(NULL));
 
-    BSTNode* root = NULL;
+    // Generate random number between 11 and 20
+    int n = rand() % 10 + 11;
 
-    int count = MIN_CHARS + rand() % (MAX_CHARS - MIN_CHARS + 1);
-    printf("Attempting to insert %d random character(s)...\n\n", count);
+    printf("Number of characters to insert: %d\n", n);
+    printf("Inserted characters: ");
 
-    for (int i = 0; i < count; i++) {
-        char ch = 'a' + rand() % ALPHA_SIZE;
-        printf("  Inserting: '%c'\n", ch);
-        bst_insert(&root, ch);
+    // Insert random lowercase characters into BST
+    for (int i = 0; i < n; i++) {
+        char c = 'a' + rand() % 26;
+        printf("%c ", c);
+        bst_insert(&root, c);
     }
 
-    printf("\n=== Characters in sorted order ===\n");
+    printf("\n");
+
+    // Print characters in sorted order
+    printf("Sorted characters (inorder traversal): ");
     bst_inorder_print(root);
     printf("\n");
 
-    printf("\n=== Tree Statistics ===\n");
-    printf("Number of nodes : %d\n", bst_count_nodes(root));
-    printf("Tree height     : %d\n", bst_height(root));
+    // Count nodes
+    int totalNodes = bst_count_nodes(root);
+    printf("Number of nodes in BST: %d\n", totalNodes);
 
+    // Get height of tree
+    int height = bst_height(root);
+    printf("Height of BST: %d\n", height);
+
+    // Free allocated memory
     bst_free(root);
-    root = NULL;
 
     return 0;
 }
